@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="manifest" href="manifest.json">
+
+<title>格闘ゲーム反応訓練</title>
+
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  overflow: hidden;
+  touch-action: none;
+}
+
+#app {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#ui-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.button {
+  position: absolute;
+  bottom: 10%;
+  width: 40%;
+  height: 20%;
+  background: rgba(255,255,255,0.15);
+  border-radius: 12px;
+  pointer-events: auto;
+  touch-action: none;
+}
+
+#guardButton {
+  left: 30%;
+}
+
+#throwButton {
+  left: 5%;
+}
+
+#attackButton {
+  right: 5%;
+}
+</style>
+</head>
+
+<body>
+<div id="app">
+  <video id="video" playsinline muted></video>
+  <div id="ui-layer"></div>
+</div>
+
+<script>
+/* ---------- 基本ユーティリティ ---------- */
+
+const video = document.getElementById("video");
+const uiLayer = document.getElementById("ui-layer");
+
+function clearUI() {
+  uiLayer.innerHTML = "";
+}
+
+function playVideo(src, onEnd) {
+  video.src = src;
+  video.currentTime = 0;
+  video.play();
+  if (onEnd) video.onended = onEnd;
+}
+
+/* ---------- シーン定義 ---------- */
+
+const scenes = [
+
+/* ===== 1. 中下段ガード ===== */
+{
+  name: "HighLowGuard",
+  videos: {
+    mainLow: "videos/highlow_main_low.mp4",
+    mainMid: "videos/highlow_main_mid.mp4",
+    success: "videos/highlow_success.mp4",
+    fail: "videos/highlow_fail.mp4"
+  },
+
+  init() {
+    clearUI();
+
+    const guardBtn = document.createElement("div");
+    guardBtn.id = "guardButton";
+    guardBtn.className = "button";
+    uiLayer.appendChild(guardBtn);
+
+    let isLow = Math.random() < 0.5;
+    let success = false;
+    let holding = false;
+    let flicked = false;
+    let startY = 0;
+
+    playVideo(
+      isLow ? this.videos.mainLow : this.videos.mainMid,
+      () => endScene(success)
+    );
+
+    // 成功判定時間（例）
+    const judgeStart = 800;
+    const judgeEnd   = 1200;
+
+    guardBtn.addEventListener("touchstart", e => {
+      const t = e.touches[0];
+      startY = t.clientY;
+      holding = true;
+    });
+
+    guardBtn.addEventListener("touchmove", e => {
+      if (!holding) return;
+      const t = e.touches[0];
+      if (startY - t.clientY > 40) flicked = true;
+    });
+
+    guardBtn.addEventListener("touchend", () => {
+      holding = false;
+    });
+
+    const timer = setInterval(() => {
+      const t = video.currentTime * 1000;
+      if (t > judgeEnd) {
+        clearInterval(timer);
+        return;
+      }
+      if (t < judgeStart) return;
+
+      if (isLow && holding) success = true;
+      if (!isLow && flicked) success = true;
+    }, 16);
+  }
+},
+
+/* ===== 2. 中央起き攻め ===== */
+{
+  name: "OkiZeme",
+  videos: {
+    mainMove: "videos/oki_main_move.mp4",
+    mainStay: "videos/oki_main_stay.mp4",
+    success: "videos/oki_success.mp4",
+    fail: "videos/oki_fail.mp4"
+  },
+
+  init() {
+    clearUI();
+
+    const throwBtn = document.createElement("div");
+    throwBtn.id = "throwButton";
+    throwBtn.className = "button";
+
+    const attackBtn = document.createElement("div");
+    attackBtn.id = "attackButton";
+    attackBtn.className = "button";
+
+    uiLayer.appendChild(throwBtn);
+    uiLayer.appendChild(attackBtn);
+
+    let isMove = Math.random() < 0.5;
+    let success = false;
+
+    playVideo(
+      isMove ? this.videos.mainMove : this.videos.mainStay,
+      () => endScene(success)
+    );
+
+    const judgeStart = 900;
+    const judgeEnd   = 1300;
+
+    function check(action) {
+      const t = video.currentTime * 1000;
+      if (t < judgeStart || t > judgeEnd) return;
+      if (isMove && action === "throw") success = true;
+      if (!isMove && action === "attack") success = true;
+    }
+
+    throwBtn.addEventListener("touchstart", () => check("throw"));
+    attackBtn.addEventListener("touchstart", () => check("attack"));
+  }
+}
+
+];
+
+/* ---------- シーン制御 ---------- */
+
+let sceneIndex = 0;
+
+function startScene() {
+  scenes[sceneIndex].init();
+}
+
+function endScene(success) {
+  clearUI();
+  playVideo(
+    success
+      ? scenes[sceneIndex].videos.success
+      : scenes[sceneIndex].videos.fail,
+    () => {
+      sceneIndex = (sceneIndex + 1) % scenes.length;
+      startScene();
+    }
+  );
+}
+
+/* ---------- PWA ---------- */
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js");
+}
+
+startScene();
+</script>
+</body>
+</html>
