@@ -1,0 +1,9 @@
+{
+  "name": "格闘ゲーム反応訓練",
+  "short_name": "FGTrainer",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "icons": []
+}
