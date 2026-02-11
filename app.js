@@ -2,7 +2,7 @@
  * 設定・定数
  */
 const FPS = 60;
-const VIDEO_PATH_BASE = './assets/videos/'; // 動画ファイルのベースパス
+const VIDEO_PATH_BASE = './videos/'; // 動画ファイルのベースパス
 
 /**
  * 1. シーンデータ定義
@@ -12,8 +12,8 @@ const SCENARIO_DATA = [
     {
         type: 'midGuard',
         params: {
-            successVideo: 'mid_guard_success.mp4',
-            failVideo: 'mid_attack_hit.mp4', // 失敗動画（最初に再生される）
+            successVideo: '2xko-warwick-mid-wakeup-front-fail.mp4',
+            failVideo: '2xko-warwick-mid-wakeup-front-fail.mp4', // 失敗動画（最初に再生される）
             judgeStartF: 20, // 発生20F
             judgeEndF: 25    // インパクト瞬間
         }
@@ -21,14 +21,14 @@ const SCENARIO_DATA = [
     {
         type: 'lowGuard',
         params: {
-            initialVideo: 'low_attack_seq.mp4' // 成功時はそのまま再生終了、失敗時は即カットなど
+            initialVideo: '2xko-warwick-mid-wakeup-front-fail.mp4' // 成功時はそのまま再生終了、失敗時は即カットなど
         }
     },
     {
         type: 'okiMove', // 移動起き攻め（投げ抜け）
         params: {
-            successVideo: 'throw_tech_success.mp4',
-            failVideo: 'throw_hit.mp4',
+            successVideo: '2xko-warwick-mid-wakeup-front-fail.mp4',
+            failVideo: '2xko-warwick-mid-wakeup-front-fail.mp4',
             judgeStartF: 30,
             judgeEndF: 40
         }
@@ -36,8 +36,8 @@ const SCENARIO_DATA = [
     {
         type: 'okiStay', // その場起き（打撃暴れ）
         params: {
-            successVideo: 'counter_hit_success.mp4',
-            failVideo: 'meaty_hit.mp4',
+            successVideo: '2xko-warwick-mid-wakeup-front-fail.mp4',
+            failVideo: '2xko-warwick-mid-wakeup-front-fail.mp4',
             judgeStartF: 30,
             judgeEndF: 40
         }
