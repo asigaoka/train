@@ -1,0 +1,138 @@
+:root {
+    --bg-color: #000;
+    --btn-size: 80px;
+}
+
+* {
+    box-sizing: border-box;
+    /* iOSでの選択・ドラッグ・長押しメニューを禁止 */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    /* タップ時のハイライトを無効化 */
+    -webkit-tap-highlight-color: transparent;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* スクロール禁止 */
+    background-color: var(--bg-color);
+    touch-action: none; /* ピンチズーム等のジェスチャ無効化 */
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+#app {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+
+#mainVideo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 全画面表示 */
+    z-index: 1;
+}
+
+#uiLayer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    pointer-events: none; /* UIのない場所は動画へイベントを通すため基本none */
+}
+
+/* UIグループ制御 */
+.ui-group {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+.ui-group.hidden { display: none; }
+.ui-group.active { display: block; pointer-events: auto; }
+
+/* スタート画面 */
+#startScreen {
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+#startBtn {
+    padding: 20px 40px;
+    font-size: 24px;
+    background: #333;
+    color: #fff;
+    border: 2px solid #fff;
+    border-radius: 8px;
+}
+
+/* ガードUI配置 */
+#guardUI { pointer-events: auto; }
+#stickArea {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50%;
+    height: 60%;
+    /* background: rgba(255,0,0,0.1); デバッグ用 */
+}
+#guardBtnArea {
+    position: absolute;
+    bottom: 50px;
+    right: 50px;
+}
+
+/* 起き攻めUI配置 */
+#okiUI { pointer-events: auto; }
+#attackBtn {
+    position: absolute;
+    bottom: 150px;
+    right: 50px;
+}
+#throwBtn {
+    position: absolute;
+    bottom: 50px;
+    right: 50px;
+}
+
+.game-btn {
+    width: var(--btn-size);
+    height: var(--btn-size);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    border: 4px solid white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+    pointer-events: auto; /* ボタン自体はタッチ可能 */
+}
+.game-btn:active { background: rgba(255, 255, 255, 0.8); color: black; }
+.game-btn.red { border-color: #ff4444; background: rgba(255, 68, 68, 0.3); }
+.game-btn.blue { border-color: #4444ff; background: rgba(68, 68, 255, 0.3); }
+
+#feedback {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 48px;
+    font-weight: 900;
+    color: #0f0;
+    text-shadow: 0 0 10px black;
+    pointer-events: none;
+}
+.hidden { display: none !important; }
