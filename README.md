@@ -1,3 +1,3 @@
 # FG
 
-https://asigaoka.github.io/fg/
+https://asigaoka.github.io/FG/
